@@ -1,0 +1,38 @@
+[
+  {
+    "id": "c001",
+    "company": "PQR Cement Ltd",
+    "location": "Mumbai",
+    "materials_needed": [
+      "fly_ash",
+      "bottom_ash"
+    ],
+    "capacity": 1000,
+    "price_offered": 3200,
+    "contact": "procurement@pqrcement.com"
+  },
+  {
+    "id": "c002",
+    "company": "LMN Industries",
+    "location": "Chennai",
+    "materials_needed": [
+      "steel_slag",
+      "silica_fume"
+    ],
+    "capacity": 800,
+    "price_offered": 2700,
+    "contact": "sourcing@lmnindustries.com"
+  },
+  {
+    "id": "c003",
+    "company": "RST Cement Co",
+    "location": "Bangalore",
+    "materials_needed": [
+      "silica_fume",
+      "fly_ash"
+    ],
+    "capacity": 1200,
+    "price_offered": 4800,
+    "contact": "materials@rstcement.com"
+  }
+]

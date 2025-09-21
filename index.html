@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CementCycle - Waste to Cement AI Platform</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --accent-color: #10b981;
+            --accent-secondary: #3b82f6;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            color: #f8fafc;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 0;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 32px;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary));
+        }
+
+        .metric-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.15);
+        }
+
+        .metric-card h3 {
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .metric-card .icon {
+            font-size: 1.25rem;
+            color: var(--accent-color);
+        }
+
+        .impact-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin: 16px 0;
+            line-height: 1;
+        }
+
+        .metric-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .chat-container {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 32px;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            min-height: 600px;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .chat-header h3 {
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .ai-status {
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .ai-status.connecting {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .ai-status.offline {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+        }
+
+        .ai-status.error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: var(--transition);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .quick-btn:hover {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 24px;
+            max-height: 400px;
+            padding-right: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f3f5;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 3px;
+        }
+
+        .message {
+            margin: 16px 0;
+            padding: 16px 20px;
+            border-radius: 16px;
+            max-width: 85%;
+            animation: slideIn 0.3s ease-out;
+            line-height: 1.5;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, var(--accent-secondary), #6366f1);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 8px;
+        }
+
+        .ai-message {
+            background: #f8fafc;
+            color: var(--text-primary);
+            border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 8px;
+            position: relative;
+        }
+
+        .ai-message::before {
+            content: '🤖';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            background: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            border: 2px solid #e5e7eb;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 16px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 24px;
+            font-size: 16px;
+            outline: none;
+            transition: var(--transition);
+            font-family: inherit;
+            background: white;
+        }
+
+        .chat-input input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 24px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .sidebar-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-card h3 {
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .waste-item, .requirement-item {
+            background: #f8fafc;
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-color);
+            transition: var(--transition);
+        }
+
+        .waste-item:hover, .requirement-item:hover {
+            background: #f1f5f9;
+            transform: translateX(4px);
+        }
+
+        .waste-item h4, .requirement-item h4 {
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .waste-item p, .requirement-item p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 4px;
+        }
+
+        .match-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            float: right;
+            margin-top: 8px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .match-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .suggested-actions {
+            margin: 16px 0;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .suggested-action-btn {
+            background: #e0f2fe;
+            border: 1px solid #0ea5e9;
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: #0369a1;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .suggested-action-btn:hover {
+            background: #0ea5e9;
+            color: white;
+        }
+
+        .bottom-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                grid-row: 1;
+            }
+            
+            .bottom-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .container {
+                padding: 16px;
+            }
+            
+            .metric-card, .chat-container, .sidebar-card {
+                padding: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        class CementCycleAgent {
+            constructor() {
+                this.sessionId = 'session-' + Math.random().toString(36).substr(2, 9);
+                this.context = {
+                    userLocation: null,
+                    currentWaste: null,
+                    preferences: {}
+                };
+                this.apiEndpoints = {
+                    chat: 'https://us-central1-cementcycle-hackathon-2025.cloudfunctions.net/geminiChat',
+                    wasteMatcher: 'https://us-central1-cementcycle-hackathon-2025.cloudfunctions.net/wasteMatcherTool',
+                    co2Calculator: 'https://us-central1-cementcycle-hackathon-2025.cloudfunctions.net/co2CalculatorTool',
+                    priceEstimator: 'https://us-central1-cementcycle-hackathon-2025.cloudfunctions.net/priceEstimatorTool',
+                    createMatch: 'https://us-central1-cementcycle-hackathon-2025.cloudfunctions.net/createMatch'
+                };
+                
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    this.apiEndpoints = {
+                        chat: 'http://localhost:8080',
+                        wasteMatcher: 'http://localhost:8081',
+                        co2Calculator: 'http://localhost:8082',
+                        priceEstimator: 'http://localhost:8083',
+                        createMatch: 'http://localhost:8084'
+                    };
+                }
+            }
+
+            async sendMessage(message) {
+                try {
+                    const result = await this.routeMessage(message);
+                    if (result) {
+                        return result;
+                    }
+
+                    const response = await fetch(this.apiEndpoints.chat, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            sessionId: this.sessionId,
+                            context: this.context
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.context) {
+                        this.context = { ...this.context, ...data.context };
+                    }
+
+                    return {
+                        text: data.response || data.message || 'Sorry, I received an empty response.',
+                        suggestedActions: data.suggestedActions || []
+                    };
+
+                } catch (error) {
+                    console.error('API Error:', error);
+                    return {
+                        text: `🚨 **Connection Error**: ${error.message}
+                        
+**Please check:**
+• Your internet connection
+• Cloud Functions are deployed and running
+• API endpoints are correctly configured
+
+**For local development:**
+Make sure your Cloud Functions are running on localhost:8080-8084
+
+**Need help?** Contact support@cementcycle.com`,
+                        suggestedActions: ["Try again", "Check connection", "Contact support"]
+                    };
+                }
+            }
+
+            async routeMessage(message) {
+                const msgLower = message.toLowerCase();
+                
+                try {
+                    if (this.containsWords(msgLower, ['match', 'find', 'connect', 'waste', 'buyer'])) {
+                        return await this.callWasteMatcher(message);
+                    }
+
+                    if (this.containsWords(msgLower, ['co2', 'carbon', 'calculate', 'impact', 'environment'])) {
+                        return await this.callCO2Calculator(message);
+                    }
+
+                    if (this.containsWords(msgLower, ['price', 'cost', 'rate', 'revenue', 'money'])) {
+                        return await this.callPriceEstimator(message);
+                    }
+
+                    return null;
+                } catch (error) {
+                    console.error('Tool routing error:', error);
+                    return null;
+                }
+            }
+
+            async callWasteMatcher(message) {
+                const response = await fetch(`${this.apiEndpoints.wasteMatcher}?action=match&waste_type=industrial`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query: message,
+                        context: this.context,
+                        waste_type: "industrial",
+                        action: "match"
+                    })
+                });
+
+                if (!response.ok) throw new Error(`Waste Matcher API Error: ${response.status}`);
+                const data = await response.json();
+                
+                return {
+                    text: `🎯 **Smart Waste Matching Results**\n\n${data.response}`,
+                    suggestedActions: data.suggestedActions || ["View all matches", "Create listing", "Contact buyer"]
+                };
+            }
+
+            async callCO2Calculator(message) {
+                const response = await fetch(this.apiEndpoints.co2Calculator, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query: message,
+                        context: this.context
+                    })
+                });
+
+                if (!response.ok) throw new Error(`CO2 Calculator API Error: ${response.status}`);
+                const data = await response.json();
+                
+                return {
+                    text: `🌍 **Environmental Impact Analysis**\n\n${data.response}`,
+                    suggestedActions: data.suggestedActions || ["Calculate for my waste", "Get carbon credits", "Download report"]
+                };
+            }
+
+            async callPriceEstimator(message) {
+                const response = await fetch(this.apiEndpoints.priceEstimator, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query: message,
+                        context: this.context
+                    })
+                });
+
+                if (!response.ok) throw new Error(`Price Estimator API Error: ${response.status}`);
+                const data = await response.json();
+                
+                return {
+                    text: `� **Market Price Analysis**\n\n${data.response}`,
+                    suggestedActions: data.suggestedActions || ["Get detailed quote", "Track price trends", "Compare options"]
+                };
+            }
+
+            async createMatch(wasteId, requirementId) {
+                try {
+                    const response = await fetch(this.apiEndpoints.createMatch, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            wasteId: wasteId,
+                            requirementId: requirementId,
+                            sessionId: this.sessionId
+                        })
+                    });
+
+                    if (!response.ok) throw new Error(`Match Creation API Error: ${response.status}`);
+                    const data = await response.json();
+                    
+                    return {
+                        text: `🎉 **Match Created Successfully!**\n\n${data.response}`,
+                        suggestedActions: data.suggestedActions || ["View match details", "Contact parties", "Track progress"]
+                    };
+                } catch (error) {
+                    console.error('Match creation error:', error);
+                    return {
+                        text: `❌ **Match Creation Failed**: ${error.message}\n\nPlease try again or contact support.`,
+                        suggestedActions: ["Try again", "Contact support"]
+                    };
+                }
+            }
+
+            containsWords(text, words) {
+                return words.some(word => text.includes(word));
+            }
+
+            async fetchRealData() {
+                try {
+                    const wasteResponse = await fetch(`${this.apiEndpoints.wasteMatcher}?action=list&waste_type=industrial`);
+                    const requirementsResponse = await fetch(`${this.apiEndpoints.wasteMatcher}?action=requirements&waste_type=industrial`);
+                    
+                    if (wasteResponse.ok && requirementsResponse.ok) {
+                        const wasteData = await wasteResponse.json();
+                        const requirementsData = await requirementsResponse.json();
+                        
+                        return {
+                            waste: wasteData.data || [],
+                            requirements: requirementsData.data || []
+                        };
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch real data:', error);
+                }
+                
+                return null;
+            }
+        }
+
+        const mockWasteData = [
+            {
+                id: 1,
+                type: "Fly Ash (Grade A)",
+                quantity: "500 tons",
+                location: "Mumbai, Maharashtra",
+                company: "ABC Power Plant Ltd",
+                co2Save: 400,
+                price: "₹3,200/ton",
+                status: "Available",
+                quality: "ASTM Grade A",
+                lastUpdated: "2 hours ago"
+            },
+            {
+                id: 2,
+                type: "Steel Slag (Grade 1)",
+                quantity: "300 tons",
+                location: "Chennai, Tamil Nadu",
+                company: "XYZ Steel Mills Pvt Ltd",
+                co2Save: 210,
+                price: "₹2,800/ton",
+                status: "Available",
+                quality: "IS Grade 1",
+                lastUpdated: "4 hours ago"
+            },
+            {
+                id: 3,
+                type: "Silica Fume",
+                quantity: "150 tons",
+                location: "Bangalore, Karnataka",
+                company: "Tech Industries Corp",
+                co2Save: 180,
+                price: "₹5,000/ton",
+                status: "Limited Stock",
+                quality: "Premium Grade",
+                lastUpdated: "1 hour ago"
+            },
+            {
+                id: 4,
+                type: "Bottom Ash",
+                quantity: "800 tons",
+                location: "Pune, Maharashtra",
+                company: "Green Energy Solutions",
+                co2Save: 480,
+                price: "₹2,000/ton",
+                status: "Available",
+                quality: "Standard Grade",
+                lastUpdated: "6 hours ago"
+            }
+        ];
+
+        const mockRequirements = [
+            {
+                id: 1,
+                material: "Fly Ash",
+                quantity: "400 tons",
+                location: "Mumbai, Maharashtra",
+                company: "PQR Cement Industries",
+                price: "₹3,200/ton",
+                urgency: "High",
+                delivery: "Express pickup available",
+                rating: 4.8
+            },
+            {
+                id: 2,
+                material: "Steel Slag",
+                quantity: "250 tons",
+                location: "Chennai, Tamil Nadu",
+                company: "LMN Cement Corporation",
+                price: "₹2,750/ton",
+                urgency: "Medium",
+                delivery: "Standard logistics",
+                rating: 4.6
+            },
+            {
+                id: 3,
+                material: "Silica Fume",
+                quantity: "100 tons",
+                location: "Bangalore, Karnataka",
+                company: "RST Premium Cement",
+                price: "₹5,200/ton",
+                urgency: "Very High",
+                delivery: "24hr pickup guarantee",
+                rating: 4.9
+            },
+            {
+                id: 4,
+                material: "Bottom Ash",
+                quantity: "600 tons",
+                location: "Pune, Maharashtra",
+                company: "Modern Cement Solutions",
+                price: "₹2,100/ton",
+                urgency: "Low",
+                delivery: "Flexible scheduling",
+                rating: 4.5
+            }
+        ];
+
+        const CementCycleApp = () => {
+            const [messages, setMessages] = useState([
+                {
+                    text: "🤖 Hello! I'm your advanced CementCycle AI assistant powered by Google Gemini. I can help you match industrial waste with cement plants, calculate environmental impact, and optimize revenue. Try asking about specific waste types or say 'help' for guidance.",
+                    isAI: true
+                }
+            ]);
+            const [inputValue, setInputValue] = useState('');
+            const [isLoading, setIsLoading] = useState(false);
+            const [totalCO2Saved, setTotalCO2Saved] = useState(12500);
+            const [activeMatches, setActiveMatches] = useState(47);
+            const [wasteProcessed, setWasteProcessed] = useState(8750);
+            const [revenueGenerated, setRevenueGenerated] = useState(2.3);
+            const [agent] = useState(() => new CementCycleAgent());
+            const [realData, setRealData] = useState(null);
+            const [connectionStatus, setConnectionStatus] = useState('connecting');
+            const messagesEndRef = useRef(null);
+
+            useEffect(() => {
+                const loadRealData = async () => {
+                    try {
+                        const data = await agent.fetchRealData();
+                        if (data) {
+                            setRealData(data);
+                            setConnectionStatus('connected');
+                            setMessages(prev => [...prev, {
+                                text: "✅ **Connected to live CementCycle platform**\n\nI now have access to real-time waste listings, cement requirements, and market data. All responses will be powered by Google Gemini AI with current market intelligence.",
+                                isAI: true
+                            }]);
+                        } else {
+                            setConnectionStatus('offline');
+                            setMessages(prev => [...prev, {
+                                text: "⚠️ **Using demo mode**\n\nI'm currently showing sample data. To access live waste listings and AI-powered matching, please ensure your Cloud Functions are deployed and running.",
+                                isAI: true,
+                                suggestedActions: ["Check deployment", "View setup guide", "Continue with demo"]
+                            }]);
+                        }
+                    } catch (error) {
+                        console.error('Failed to load real data:', error);
+                        setConnectionStatus('error');
+                        setMessages(prev => [...prev, {
+                            text: `🚨 **Connection Error**\n\nFailed to connect to CementCycle backend services. Error: ${error.message}\n\nUsing demo mode for now.`,
+                            isAI: true
+                        }]);
+                    }
+                };
+
+                loadRealData();
+            }, [agent]);
+
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setTotalCO2Saved(prev => prev + Math.floor(Math.random() * 8) + 2);
+                    setActiveMatches(prev => {
+                        const change = Math.floor(Math.random() * 3) - 1;
+                        return Math.max(40, prev + change);
+                    });
+                    setWasteProcessed(prev => prev + Math.floor(Math.random() * 12) + 3);
+                    setRevenueGenerated(prev => Number((prev + (Math.random() * 0.05)).toFixed(2)));
+                }, 4000);
+                return () => clearInterval(interval);
+            }, []);
+
+            useEffect(() => {
+                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            }, [messages]);
+
+            const quickActions = [
+                "I have fly ash to sell",
+                "Find steel slag buyers",
+                "Calculate CO2 impact",
+                "Show current market prices",
+                "Register my company"
+            ];
+
+            const handleSendMessage = async (text = inputValue) => {
+                if (!text.trim()) return;
+
+                setMessages(prev => [...prev, { text, isAI: false }]);
+                setInputValue('');
+                setIsLoading(true);
+
+                try {
+                    const response = await agent.sendMessage(text);
+                    setMessages(prev => [...prev, {
+                        text: response.text,
+                        isAI: true,
+                        suggestedActions: response.suggestedActions
+                    }]);
+                } catch (error) {
+                    setMessages(prev => [...prev, {
+                        text: "🚨 I'm experiencing technical difficulties. Our engineering team has been notified. Please try again in a moment or contact support@cementcycle.com",
+                        isAI: true
+                    }]);
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
+            const handleQuickAction = (action) => {
+                handleSendMessage(action);
+            };
+
+            const handleSuggestedAction = (action) => {
+                handleSendMessage(action);
+            };
+
+            const handleMatch = async (wasteId, requirementId) => {
+                try {
+                    const result = await agent.createMatch(wasteId, requirementId);
+                    setMessages(prev => [...prev, result]);
+                } catch (error) {
+                    console.error('Match creation failed:', error);
+                    setMessages(prev => [...prev, {
+                        text: `❌ **Match Creation Failed**: ${error.message}
+
+**Please try again or contact our support team**
+� support@cementcycle.com
+📱 +91-9876543210`,
+                        isAI: true
+                    }]);
+                }
+            };
+
+            const handleKeyPress = (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                }
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1>🌱 CementCycle</h1>
+                        <p>AI-Powered Circular Economy Platform Transforming Industrial Waste into Sustainable Cement Solutions</p>
+                    </div>
+
+                    <div className="dashboard">
+                        <div className="metric-card">
+                            <h3><i className="fas fa-leaf icon"></i>CO2 Saved (Tons)</h3>
+                            <div className="impact-number">{totalCO2Saved.toLocaleString()}</div>
+                            <div className="metric-description">
+                                Equivalent to {Math.floor(totalCO2Saved * 1.2).toLocaleString()} trees planted
+                            </div>
+                        </div>
+                        <div className="metric-card">
+                            <h3><i className="fas fa-link icon"></i>Active Matches</h3>
+                            <div className="impact-number">{activeMatches}</div>
+                            <div className="metric-description">
+                                Waste-to-cement connections this month
+                            </div>
+                        </div>
+                        <div className="metric-card">
+                            <h3><i className="fas fa-recycle icon"></i>Waste Processed (Tons)</h3>
+                            <div className="impact-number">{wasteProcessed.toLocaleString()}</div>
+                            <div className="metric-description">
+                                Diverted from landfills to productive use
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="main-content">
+                        <div className="chat-container">
+                            <div className="chat-header">
+                                <h3><i className="fas fa-robot"></i> Gemini AI Assistant</h3>
+                                <div className={`ai-status ${connectionStatus}`}>
+                                    <i className={`fas fa-circle ${connectionStatus === 'connected' ? 'pulse' : ''}`}></i> 
+                                    {connectionStatus === 'connected' ? 'Live API' : 
+                                     connectionStatus === 'connecting' ? 'Connecting...' : 
+                                     connectionStatus === 'offline' ? 'Demo Mode' : 'Error'}
+                                </div>
+                            </div>
+
+                            <div className="quick-actions">
+                                {quickActions.map((action, index) => (
+                                    <button
+                                        key={index}
+                                        className="quick-btn"
+                                        onClick={() => handleQuickAction(action)}
+                                    >
+                                        {action}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="chat-messages">
+                                {messages.map((message, index) => (
+                                    <div key={index}>
+                                        <div className={`message ${message.isAI ? 'ai-message' : 'user-message'}`}>
+                                            <div dangerouslySetInnerHTML={{ __html: message.text.replace(/\n/g, '<br>') }} />
+                                        </div>
+                                        {message.suggestedActions && (
+                                            <div className="suggested-actions">
+                                                {message.suggestedActions.map((action, actionIndex) => (
+                                                    <button
+                                                        key={actionIndex}
+                                                        onClick={() => handleSuggestedAction(action)}
+                                                        className="suggested-action-btn"
+                                                    >
+                                                        {action}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                                {isLoading && (
+                                    <div className="message ai-message">
+                                        <div className="loading"></div>
+                                        AI is analyzing your request...
+                                    </div>
+                                )}
+                                <div ref={messagesEndRef} />
+                            </div>
+
+                            <div className="chat-input">
+                                <input
+                                    type="text"
+                                    value={inputValue}
+                                    onChange={(e) => setInputValue(e.target.value)}
+                                    placeholder="Ask about waste matching, pricing, environmental impact, or logistics..."
+                                    onKeyPress={handleKeyPress}
+                                />
+                                <button className="send-btn" onClick={() => handleSendMessage()}>
+                                    <i className="fas fa-paper-plane"></i>
+                                    Send
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="sidebar">
+                            <div className="sidebar-card">
+                                <h3><i className="fas fa-chart-line icon"></i>Revenue Impact</h3>
+                                <div className="stats-grid">
+                                    <div className="stat-item">
+                                        <span className="stat-number">₹{revenueGenerated}Cr</span>
+                                        <div className="stat-label">Generated This Quarter</div>
+                                    </div>
+                                    <div className="stat-item">
+                                        <span className="stat-number">₹3,200</span>
+                                        <div className="stat-label">Avg Price/Ton</div>
+                                    </div>
+                                    <div className="stat-item">
+                                        <span className="stat-number">98.5%</span>
+                                        <div className="stat-label">Success Rate</div>
+                                    </div>
+                                    <div className="stat-item">
+                                        <span className="stat-number">24hr</span>
+                                        <div className="stat-label">Avg Match Time</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="sidebar-card">
+                                <h3><i className="fas fa-bullhorn icon"></i>Market Alerts</h3>
+                                <div className="waste-item">
+                                    <h4>🔥 High Demand: Silica Fume</h4>
+                                    <p>Price increased 12% this month</p>
+                                    <p>Premium rates up to ₹5,200/ton</p>
+                                </div>
+                                <div className="waste-item">
+                                    <h4>📈 Trend: Steel Slag Rising</h4>
+                                    <p>Infrastructure boom driving demand</p>
+                                    <p>Long-term contracts available</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bottom-section">
+                        <div className="sidebar-card">
+                            <h3><i className="fas fa-boxes icon"></i>Available Waste Inventory</h3>
+                            {(realData?.waste || mockWasteData).map(waste => (
+                                <div key={waste.id} className="waste-item">
+                                    <h4>{waste.type} - {waste.quantity}</h4>
+                                    <p><strong>{waste.company}</strong>, {waste.location}</p>
+                                    <p>Quality: {waste.quality} | CO2 Savings: {waste.co2Save} tons</p>
+                                    <p>Price: {waste.price} | Updated: {waste.lastUpdated}</p>
+                                    <button
+                                        className="match-btn"
+                                        onClick={() => handleMatch(waste.id, 1)}
+                                    >
+                                        {connectionStatus === 'connected' ? 'AI Match' : 'Demo Match'}
+                                    </button>
+                                </div>
+                            ))}
+                            {connectionStatus !== 'connected' && (
+                                <div style={{textAlign: 'center', padding: '16px', color: '#6b7280', fontSize: '0.875rem'}}>
+                                    📍 Showing demo data. Connect to API for live listings.
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="sidebar-card">
+                            <h3><i className="fas fa-industry icon"></i>Cement Plant Requirements</h3>
+                            {(realData?.requirements || mockRequirements).map(req => (
+                                <div key={req.id} className="requirement-item">
+                                    <h4>{req.material} - {req.quantity}</h4>
+                                    <p><strong>{req.company}</strong>, {req.location}</p>
+                                    <p>Offering: {req.price} | Rating: ⭐ {req.rating}/5</p>
+                                    <p>Urgency: {req.urgency} | {req.delivery}</p>
+                                    <button
+                                        className="match-btn"
+                                        onClick={() => handleMatch(1, req.id)}
+                                    >
+                                        {connectionStatus === 'connected' ? 'AI Connect' : 'Demo Connect'}
+                                    </button>
+                                </div>
+                            ))}
+                            {connectionStatus !== 'connected' && (
+                                <div style={{textAlign: 'center', padding: '16px', color: '#6b7280', fontSize: '0.875rem'}}>
+                                    📍 Showing demo data. Connect to API for live requirements.
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<CementCycleApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>

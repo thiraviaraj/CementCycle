@@ -1,0 +1,35 @@
+[
+  {
+    "id": "w001",
+    "type": "fly_ash",
+    "quantity": 500,
+    "location": "Mumbai",
+    "company": "ABC Power Plant",
+    "contact": "waste@abcpower.com",
+    "available_date": "2025-09-20T16:21:39.454921",
+    "co2_potential": 400,
+    "price_expected": 3000
+  },
+  {
+    "id": "w002",
+    "type": "steel_slag",
+    "quantity": 300,
+    "location": "Chennai",
+    "company": "XYZ Steel Mills",
+    "contact": "sales@xyzsteel.com",
+    "available_date": "2025-09-20T16:21:39.454943",
+    "co2_potential": 210,
+    "price_expected": 2500
+  },
+  {
+    "id": "w003",
+    "type": "silica_fume",
+    "quantity": 150,
+    "location": "Bangalore",
+    "company": "Tech Industries",
+    "contact": "waste@techindustries.com",
+    "available_date": "2025-09-20T16:21:39.454945",
+    "co2_potential": 180,
+    "price_expected": 4500
+  }
+]

@@ -1,0 +1,41 @@
+    {
+    "projectId": "cementcycle-hackathon-2025",
+    "region": "us-central1",
+    "databaseUrl": "https://cementcycle-hackathon-2025.firebaseio.com",
+    "geminiApiKey": "YOUR_GEMINI_API_KEY",
+    "serviceAccountKeyPath": "./serviceAccountKey.json",
+    "allowedOrigins": [
+        "https://cementcycle-app-213588704185.us-central1.run.app",
+        "http://localhost:3000",
+        "http://localhost:8080"
+    ],
+    "geminiModel": "gemini-1.5-pro",
+    "geminiConfig": {
+        "temperature": 0.7,
+        "topK": 40,
+        "topP": 0.8,
+        "maxOutputTokens": 1024
+    },
+    "database": {
+        "collections": {
+        "waste_listings": "waste_listings",
+        "cement_requirements": "cement_requirements", 
+        "matches": "matches",
+        "users": "users",
+        "transactions": "transactions"
+        }
+    },
+    "notifications": {
+        "email": {
+        "enabled": true,
+        "provider": "sendgrid",
+        "apiKey": "YOUR_SENDGRID_API_KEY"
+        },
+        "sms": {
+        "enabled": true,
+        "provider": "twilio",
+        "accountSid": "YOUR_TWILIO_ACCOUNT_SID",
+        "authToken": "YOUR_TWILIO_AUTH_TOKEN"
+        }
+    }
+    }

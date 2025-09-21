@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CementCycle - Optimizing Cement Operations with Generative AI</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: white;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide.prev {
+            transform: translateX(-100%);
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #10b981;
+        }
+
+        h3 {
+            font-size: 2.5rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            color: #3b82f6;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #94a3b8;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #10b981;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .card-text {
+            font-size: 1rem;
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .tech-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tech-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .architecture-diagram {
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .arch-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .arch-component {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            border: 2px solid #10b981;
+        }
+
+        .arch-arrow {
+            font-size: 2rem;
+            color: #3b82f6;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            color: white;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(16, 185, 129, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .bullet-points {
+            text-align: left;
+            max-width: 800px;
+        }
+
+        .bullet-points li {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #e2e8f0;
+            list-style: none;
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .bullet-points li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .highlight {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #10b981;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            margin-top: 0.5rem;
+        }
+
+        .demo-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .demo-screenshot {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="slide-counter">
+            <span id="current-slide">1</span> / <span id="total-slides">9</span>
+        </div>
+
+        <div class="slide active">
+            <h1>CementCycle</h1>
+            <p class="subtitle">Optimizing Cement Operations with Generative AI</p>
+            <div class="content-grid" style="max-width: 600px;">
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-recycle"></i></div>
+                    <div class="card-title">Circular Economy</div>
+                    <div class="card-text">Transforming industrial waste into sustainable cement materials</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-robot"></i></div>
+                    <div class="card-title">AI-Powered</div>
+                    <div class="card-text">Google Gemini AI for intelligent waste-to-cement matching</div>
+                </div>
+            </div>
+            <p style="margin-top: 3rem; font-size: 1.2rem; color: #94a3b8;">Google Hackathon 2025</p>
+        </div>
+
+        <div class="slide">
+            <h2>The Problem</h2>
+            <div class="content-grid">
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-industry"></i></div>
+                    <div class="card-title">Cement Industry Crisis</div>
+                    <div class="card-text"><strong>8% of global CO₂ emissions</strong> - more than aviation industry. Massive energy consumption depleting limestone and clay resources.</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-trash"></i></div>
+                    <div class="card-title">Waste Paradox</div>
+                    <div class="card-text"><strong>Millions of tons</strong> of fly ash, slag, silica fume ending up in landfills while cement plants need these exact materials.</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-disconnect"></i></div>
+                    <div class="card-title">Market Disconnect</div>
+                    <div class="card-text"><strong>$55B waste management gap</strong> - no efficient way to connect waste suppliers with cement manufacturers.</div>
+                </div>
+            </div>
+            <div style="margin-top: 3rem; max-width: 900px; text-align: center;">
+                <p style="font-size: 1.3rem; color: #e2e8f0; line-height: 1.7;">
+                    <span class="highlight">The irony:</span> While cement plants hunger for raw materials, industries generate millions of tons of perfect cement additives that end up in landfills. This market inefficiency costs billions and accelerates environmental degradation.
+                </p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>Our AI-Powered Solution</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number">AI</span>
+                    <div class="stat-label">Powered Matching</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">Real-time</span>
+                    <div class="stat-label">Price Estimation</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">Auto</span>
+                    <div class="stat-label">CO₂ Calculation</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">Smart</span>
+                    <div class="stat-label">Waste Matching</div>
+                </div>
+            </div>
+            <ul class="bullet-points" style="margin-top: 3rem;">
+                <li><span class="highlight">Google Gemini AI</span> acts as intelligent matchmaker analyzing chemical composition, geography, and market conditions</li>
+                <li><span class="highlight">Conversational Interface:</span> "I have 1,000 tons of slag with 45% calcium oxide" → Instant matches with compatible cement plants</li>
+                <li><span class="highlight">Real-time Intelligence:</span> Price estimates, CO₂ impact calculations, automated compliance checking</li>
+                <li><span class="highlight">Circular Economy Engine:</span> Transforms waste disposal costs into revenue streams</li>
+            </ul>
+            <div style="margin-top: 2rem; text-align: center; background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: 12px;">
+                <p style="font-size: 1.2rem; color: #10b981; font-weight: 600;">
+                    "What's the best price for fly ash in Texas?" → AI delivers instant market intelligence
+                </p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>Technology Stack</h2>
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <div class="tech-icon" style="color: #10b981;"><i class="fab fa-google"></i></div>
+                    <div class="card-title">Google Gemini AI</div>
+                    <div class="card-text">Advanced language model for intelligent matching and chat</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon" style="color: #3b82f6;"><i class="fab fa-google"></i></div>
+                    <div class="card-title">Google Cloud Platform</div>
+                    <div class="card-text">Cloud Functions, Firestore, Cloud Run</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon" style="color: #61dafb;"><i class="fab fa-react"></i></div>
+                    <div class="card-title">React 18</div>
+                    <div class="card-text">Modern frontend with real-time updates</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon" style="color: #f7df1e;"><i class="fab fa-js"></i></div>
+                    <div class="card-title">Node.js</div>
+                    <div class="card-text">Backend services and API integration</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon" style="color: #ff6b35;"><i class="fas fa-database"></i></div>
+                    <div class="card-title">Firestore</div>
+                    <div class="card-text">Real-time NoSQL database</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon" style="color: #306998;"><i class="fab fa-python"></i></div>
+                    <div class="card-title">Python</div>
+                    <div class="card-text">Data processing and testing suite</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>System Architecture</h2>
+            <div class="architecture-diagram">
+                <div class="arch-flow">
+                    <div class="arch-component">
+                        <h3><i class="fas fa-desktop"></i></h3>
+                        <div class="card-title">React Frontend</div>
+                        <div class="card-text">User Interface<br/>Cloud Run Deployment</div>
+                    </div>
+                    <div class="arch-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="arch-component">
+                        <h3><i class="fas fa-cloud"></i></h3>
+                        <div class="card-title">Cloud Functions</div>
+                        <div class="card-text">Serverless APIs<br/>Business Logic</div>
+                    </div>
+                    <div class="arch-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="arch-component">
+                        <h3><i class="fas fa-database"></i></h3>
+                        <div class="card-title">Firestore</div>
+                        <div class="card-text">Real-time Database<br/>Data Storage</div>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem; text-align: center;">
+                    <div class="arch-component" style="display: inline-block; margin: 0 1rem;">
+                        <h3><i class="fas fa-robot"></i></h3>
+                        <div class="card-title">Google Gemini AI</div>
+                        <div class="card-text">Intelligent Matching & Chat</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>Key Features</h2>
+            <div class="content-grid">
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-comments"></i></div>
+                    <div class="card-title">AI Chat Assistant</div>
+                    <div class="card-text">Natural language interface for waste matching, pricing, and environmental impact queries</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-search"></i></div>
+                    <div class="card-title">Smart Matching</div>
+                    <div class="card-text">AI-powered algorithm to match waste materials with cement plant requirements</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-calculator"></i></div>
+                    <div class="card-title">CO₂ Calculator</div>
+                    <div class="card-text">Real-time environmental impact assessment and carbon footprint reduction tracking</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="card-title">Price Estimator</div>
+                    <div class="card-text">Dynamic pricing based on market conditions, quality, and transportation costs</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="card-title">Analytics Dashboard</div>
+                    <div class="card-text">Real-time metrics on waste processing, cost savings, and environmental impact</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-mobile-alt"></i></div>
+                    <div class="card-title">Responsive Design</div>
+                    <div class="card-text">Mobile-first design with cross-platform compatibility</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>Platform Demo</h2>
+            <div class="demo-section">
+                <h3>Live Platform Features</h3>
+                <ul class="bullet-points">
+                    <li><span class="highlight">Interactive AI Chat:</span> Ask questions like "I have 500 tons of fly ash to sell"</li>
+                    <li><span class="highlight">Real-time Matching:</span> Automated matching of waste with cement requirements</li>
+                    <li><span class="highlight">Environmental Impact:</span> CO₂ reduction calculations and sustainability metrics</li>
+                    <li><span class="highlight">Market Dashboard:</span> Live waste listings and cement plant requirements</li>
+                </ul>
+            </div>
+            <div style="text-align: center; margin-top: 2rem;">
+                <p style="font-size: 1.5rem; color: #10b981;">🚀 Deployed on Google Cloud Platform</p>
+                <p style="font-size: 1.2rem; color: #94a3b8; margin-top: 1rem;">Cloud Run • Cloud Functions • Firestore</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>Target Consumers & Market Segments</h2>
+            <div class="content-grid">
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-industry"></i></div>
+                    <div class="card-title">Cement Manufacturers</div>
+                    <div class="card-text"><strong>Who:</strong> Lafarge, Holcim, Cemex<br/><strong>Pain:</strong> High raw material costs<br/><strong>Value:</strong> 20-30% cost reduction</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-bolt"></i></div>
+                    <div class="card-title">Waste Generators</div>
+                    <div class="card-text"><strong>Who:</strong> Power plants, steel mills<br/><strong>Pain:</strong> $100/ton disposal costs<br/><strong>Value:</strong> $200/ton revenue stream</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-truck"></i></div>
+                    <div class="card-title">Waste Management</div>
+                    <div class="card-text"><strong>Who:</strong> Veolia, Waste Management Inc.<br/><strong>Pain:</strong> Limited high-value recycling<br/><strong>Value:</strong> Premium waste placement</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-building"></i></div>
+                    <div class="card-title">Construction Companies</div>
+                    <div class="card-text"><strong>Who:</strong> Bechtel, Skanska<br/><strong>Pain:</strong> Sustainability requirements<br/><strong>Value:</strong> Green building certifications</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-landmark"></i></div>
+                    <div class="card-title">Government Agencies</div>
+                    <div class="card-text"><strong>Who:</strong> EPA, EU environmental<br/><strong>Pain:</strong> Carbon reduction targets<br/><strong>Value:</strong> Circular economy goals</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="card-title">ESG Consultants</div>
+                    <div class="card-text"><strong>Who:</strong> EY, Deloitte sustainability<br/><strong>Pain:</strong> Measurable impact data<br/><strong>Value:</strong> Carbon credit opportunities</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>Impact & Future Vision</h2>
+            <div class="stats-grid" style="margin-bottom: 3rem;">
+                <div class="stat-item">
+                    <span class="stat-number">30%</span>
+                    <div class="stat-label">CO₂ Reduction</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">$2M+</span>
+                    <div class="stat-label">Annual Savings</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">$400B+</span>
+                    <div class="stat-label">Market Opportunity</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">1M+</span>
+                    <div class="stat-label">Tons Year 1</div>
+                </div>
+            </div>
+            
+            <div style="background: rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 2rem; margin: 2rem 0; border: 1px solid rgba(255, 255, 255, 0.2);">
+                <h3 style="margin-bottom: 1rem; color: #10b981;"><i class="fas fa-rocket"></i> Revenue Model</h3>
+                <ul class="bullet-points">
+                    <li><span class="highlight">Transaction Fees:</span> 2-5% commission on successful waste-cement matches</li>
+                    <li><span class="highlight">Subscription Plans:</span> Premium analytics and priority matching for enterprises</li>
+                    <li><span class="highlight">Data Services:</span> Market intelligence and sustainability reporting</li>
+                </ul>
+            </div>
+
+            <ul class="bullet-points">
+                <li><span class="highlight">Year 1:</span> Target 50 cement plants and 200 waste generators across North America</li>
+                <li><span class="highlight">Year 3:</span> Global expansion with IoT integration and blockchain transparency</li>
+                <li><span class="highlight">Vision:</span> Become the AWS of industrial circular economy</li>
+            </ul>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn" onclick="previousSlide()"><i class="fas fa-chevron-left"></i> Previous</button>
+            <button class="nav-btn" onclick="nextSlide()">Next <i class="fas fa-chevron-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev');
+                if (index === n) {
+                    slide.classList.add('active');
+                } else if (index < n) {
+                    slide.classList.add('prev');
+                }
+            });
+            
+            document.getElementById('current-slide').textContent = n + 1;
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
+        }
+
+        function previousSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            }
+        });
+
+        showSlide(0);
+    </script>
+</body>
+</html>

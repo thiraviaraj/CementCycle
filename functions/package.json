@@ -1,0 +1,54 @@
+{
+  "name": "cementcycle-functions",
+  "version": "2.0.0",
+  "description": "Enhanced CementCycle Cloud Functions with Gemini AI and Firestore integration",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "functions-framework --target=geminiChat --port=8080",
+    "start:chat": "functions-framework --target=geminiChat --port=8080",
+    "start:matcher": "functions-framework --target=wasteMatcherTool --port=8081",
+    "start:co2": "functions-framework --target=co2CalculatorTool --port=8082",
+    "start:price": "functions-framework --target=priceEstimatorTool --port=8083",
+    "start:match": "functions-framework --target=createMatch --port=8084",
+    "deploy:all": "npm run deploy:chat && npm run deploy:matcher && npm run deploy:co2 && npm run deploy:price && npm run deploy:match",
+    "deploy:chat": "gcloud functions deploy geminiChat --runtime nodejs18 --trigger-http --allow-unauthenticated --region us-central1 --source=.",
+    "deploy:matcher": "gcloud functions deploy wasteMatcherTool --runtime nodejs18 --trigger-http --allow-unauthenticated --region us-central1 --source=.",
+    "deploy:co2": "gcloud functions deploy co2CalculatorTool --runtime nodejs18 --trigger-http --allow-unauthenticated --region us-central1 --source=.",
+    "deploy:price": "gcloud functions deploy priceEstimatorTool --runtime nodejs18 --trigger-http --allow-unauthenticated --region us-central1 --source=.",
+    "deploy:match": "gcloud functions deploy createMatch --runtime nodejs18 --trigger-http --allow-unauthenticated --region us-central1 --source=.",
+    "test": "node test/test.js",
+    "lint": "eslint .",
+    "dev": "nodemon --exec 'functions-framework --target=geminiChat --port=8080'"
+  },
+  "dependencies": {
+    "@google-cloud/functions-framework": "^3.3.0",
+    "@google-cloud/firestore": "^7.7.0",
+    "@google/generative-ai": "^0.16.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "keywords": [
+    "circular-economy",
+    "waste-management", 
+    "cement-industry",
+    "ai",
+    "gemini",
+    "firestore",
+    "sustainability",
+    "cloud-functions",
+    "gcp"
+  ],
+  "author": "CementCycle Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cementcycle/functions"
+  }
+}
